@@ -1,6 +1,8 @@
 
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:journal/presentation/bloc/journal_screen_bloc.dart';
 
 import 'presentation/journal_screen.dart';
 
@@ -20,7 +22,10 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.teal,
       ),
-      home: const JournalScreen(title: 'Flutter Demo Home Page'),
+      home: BlocProvider(
+        create: (context) => JournalScreenBloc(),
+          child: const JournalScreen(title: 'Flutter Demo Home Page')
+      ),
     );
   }
 }

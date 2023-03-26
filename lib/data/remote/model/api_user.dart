@@ -9,7 +9,7 @@ class ApiUser {
 });
 
   ApiUser.fromJson(Map<String, dynamic> json) {
-    id = json['id'];
+    id = json['_id'];
     firstName = json['firstName'];
     lastName = json['lastName'];
     email = json['email'];

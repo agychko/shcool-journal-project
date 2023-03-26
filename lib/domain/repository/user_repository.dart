@@ -1,7 +1,7 @@
 
-import 'package:journal/data/remote/model/api_user.dart';
+import 'package:journal/domain/entities/user.dart';
 
 
 abstract class UserRepository {
-  Future <ApiUsersList> getUsersList ();
+  Future <List<User>> getUsersList ();
 }

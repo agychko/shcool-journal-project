@@ -37,6 +37,8 @@ dependencies:
   cupertino_icons: ^1.0.2
   linked_scroll_controller: ^0.2.0
   http: ^0.13.5
+  flutter_bloc: ^8.1.2
+  meta: ^1.8.0
 
 dev_dependencies:
   flutter_test:
