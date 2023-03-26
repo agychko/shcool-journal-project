@@ -72,6 +72,9 @@ class _JournalScreenState extends State<JournalScreen> {
                       if (state is JournalScreenLoading) {
                         return const CircularProgressIndicator();
                       }
+                      if (state is JournalScreenError) {
+                        return const Text('Error');
+                      }
                       if (state is JournalScreenSuccess) {
                       return DataTable(
                         columnSpacing: 0,
