@@ -23,6 +23,10 @@ class JournalScreenBloc extends Bloc<JournalScreenEvent, JournalScreenState> {
   void _getUsersList(Emitter<JournalScreenState> emit) async {
     emit(JournalScreenLoading());
     var usersData = await _userRepository.getUsersList();
-    emit(JournalScreenSuccess(usersData));
+    if (usersData.isSuccess()) {
+      var usersList = usersData.asSuccess().data;
+      emit(JournalScreenSuccess(usersList));
+    }
+    emit(JournalScreenError(usersData.asError().errorMessage));
   }
 }

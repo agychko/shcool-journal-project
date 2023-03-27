@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:journal/presentation/bloc/journal_screen_bloc.dart';
 
-import 'presentation/journal_screen.dart';
+import 'presentation/screens/journal_screen.dart';
 
 void main() {
   runApp(const MyApp());
