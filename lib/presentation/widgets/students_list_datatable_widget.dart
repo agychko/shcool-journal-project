@@ -1,16 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:journal/domain/entities/user.dart';
 
-class StudentListTableWidget extends StatefulWidget {
+class StudentListDataTableWidget extends StatefulWidget {
   final List<User> usersList;
 
-  const StudentListTableWidget({super.key, required this.usersList});
+  const StudentListDataTableWidget({super.key, required this.usersList});
 
   @override
-  StudentListTableWidgetState createState() => StudentListTableWidgetState();
+  StudentListDataTableWidgetState createState() => StudentListDataTableWidgetState();
 }
 
-class StudentListTableWidgetState extends State<StudentListTableWidget> {
+class StudentListDataTableWidgetState extends State<StudentListDataTableWidget> {
   @override
   Widget build(BuildContext context) {
     return DataTable(

@@ -1,10 +1,10 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:journal/data/remote/source/user_api_source.dart';
-import 'package:journal/data/repository/user_repository_impl.dart';
+import 'package:journal/data/repositories/user_repository_impl.dart';
 import 'package:meta/meta.dart';
 
-import '../../domain/entities/user.dart';
-import '../../domain/repository/user_repository.dart';
+import '../../../domain/entities/user.dart';
+import '../../../domain/repositories/user_repository.dart';
 
 part 'journal_screen_event.dart';
 

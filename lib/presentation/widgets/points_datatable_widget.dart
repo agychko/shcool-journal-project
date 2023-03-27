@@ -3,23 +3,23 @@ import 'package:flutter/material.dart';
 import '../../domain/entities/point.dart';
 import '../../domain/entities/user.dart';
 
-class DataPointsTableWidget extends StatefulWidget {
+class PointsDataTableWidget extends StatefulWidget {
   final int counter;
   final List<User> allUsers;
   final List<Point> points;
   final Function(Point, User) onTap;
 
-  const DataPointsTableWidget(
+  const PointsDataTableWidget(
       {super.key,
       required this.counter,
       required this.allUsers,
       required this.points, required this.onTap});
 
   @override
-  DataPointsTableWidgetState createState() => DataPointsTableWidgetState();
+  PointsDataTableWidgetState createState() => PointsDataTableWidgetState();
 }
 
-class DataPointsTableWidgetState extends State<DataPointsTableWidget> {
+class PointsDataTableWidgetState extends State<PointsDataTableWidget> {
 
   @override
   Widget build(BuildContext context) {

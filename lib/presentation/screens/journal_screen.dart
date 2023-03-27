@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:journal/data/local/points.dart';
-import 'package:journal/presentation/bloc/journal_screen_bloc.dart';
-import 'package:journal/presentation/widgets/students_list_table_widget.dart';
+import 'package:journal/presentation/blocs/journal_screen/journal_screen_bloc.dart';
+import 'package:journal/presentation/widgets/students_list_datatable_widget.dart';
 import 'package:linked_scroll_controller/linked_scroll_controller.dart';
 import '../../domain/entities/point.dart';
 import '../../domain/entities/user.dart';
-import '../widgets/data_points_table_widget.dart';
+import '../widgets/points_datatable_widget.dart';
 import '../widgets/text_dialog_widget.dart';
 
 class JournalScreen extends StatefulWidget {
@@ -82,12 +82,12 @@ class _JournalScreenState extends State<JournalScreen> {
                   SingleChildScrollView(
                     child: Row(
                       children: [
-                        StudentListTableWidget(usersList: state.usersData),
+                        StudentListDataTableWidget(usersList: state.usersData),
                         Expanded(
                           child: SingleChildScrollView(
                             scrollDirection: Axis.horizontal,
                             controller: dataScrollController,
-                            child: DataPointsTableWidget(
+                            child: PointsDataTableWidget(
                               counter: counter,
                               allUsers: state.usersData,
                               points: points,
@@ -100,12 +100,12 @@ class _JournalScreenState extends State<JournalScreen> {
                   ),
                   Row(
                     children: [
-                      const StudentListTableWidget(usersList: []),
+                      const StudentListDataTableWidget(usersList: []),
                       Expanded(
                         child: SingleChildScrollView(
                             scrollDirection: Axis.horizontal,
                             controller: headerScrollController,
-                            child: DataPointsTableWidget(
+                            child: PointsDataTableWidget(
                                 counter: counter,
                                 allUsers: const [],
                                 points: const [],

@@ -1,7 +1,7 @@
 import 'package:journal/data/remote/source/user_api_source.dart';
 import 'package:journal/data/response/data_response.dart';
 import 'package:journal/domain/entities/user.dart';
-import 'package:journal/domain/repository/user_repository.dart';
+import 'package:journal/domain/repositories/user_repository.dart';
 
 class UserRepositoryImpl extends UserRepository {
   final UserApiSource _userApiSource;

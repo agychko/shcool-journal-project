@@ -2,7 +2,7 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:journal/presentation/bloc/journal_screen_bloc.dart';
+import 'package:journal/presentation/blocs/journal_screen/journal_screen_bloc.dart';
 
 import 'presentation/screens/journal_screen.dart';
 
