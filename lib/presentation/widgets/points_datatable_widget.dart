@@ -47,7 +47,15 @@ class PointsDataTableWidgetState extends State<PointsDataTableWidget> {
         (index) => DataColumn(
             label: Row(children: [
           SizedBox(
-              width: 30, child: Text('$index', textAlign: TextAlign.center)),
+              width: 30, child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Text('0$index', textAlign: TextAlign.center),
+                  const Divider(color: Colors.black, thickness: 0.5, indent: 7, endIndent: 7, height: 5,),
+                  const Text('03', textAlign: TextAlign.center),
+                ],
+              )),
           const SizedBox(
             width: 1,
             child: VerticalDivider(color: Colors.grey, thickness: 1),

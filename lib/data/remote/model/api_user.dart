@@ -14,6 +14,14 @@ class ApiUser {
     lastName = json['lastName'];
     email = json['email'];
   }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'firstName': firstName,
+      'lastName': lastName,
+      'email': email,
+    };
+  }
 }
 
 class ApiUsersList {
@@ -24,20 +32,4 @@ class ApiUsersList {
       apiUsers.add(ApiUser.fromJson(jsonItem));
     }
   }
-}
-
-abstract class UserApiResult {}
-
-class UserApiResultSuccess extends UserApiResult {
-  final ApiUsersList apiUsersList;
-  UserApiResultSuccess(this.apiUsersList);
-}
-
-class UserApiResultFailure extends UserApiResult {
-  final String error;
-  UserApiResultFailure(this.error);
-}
-
-class UserApiResultLoading extends UserApiResult {
-  UserApiResultLoading();
 }

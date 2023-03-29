@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:journal/data/local/points.dart';
 import 'package:journal/presentation/blocs/journal_screen/journal_screen_bloc.dart';
-import 'package:journal/presentation/widgets/students_list_datatable_widget.dart';
+import 'package:journal/presentation/widgets/student_list_datatable_widget.dart';
 import 'package:linked_scroll_controller/linked_scroll_controller.dart';
 import '../../domain/entities/point.dart';
 import '../../domain/entities/user.dart';
@@ -25,8 +25,6 @@ class _JournalScreenState extends State<JournalScreen> {
   late ScrollController headerScrollController;
   late ScrollController dataScrollController;
   late List<Point> points;
-
-  // late List<ApiUser> allUsers;
 
   void _incrementCounter() {
     setState(() {
@@ -65,7 +63,7 @@ class _JournalScreenState extends State<JournalScreen> {
       body: BlocBuilder<JournalScreenBloc, JournalScreenState>(
         builder: (context, state) {
           if (state is JournalScreenLoading) {
-            return const CircularProgressIndicator();
+            return const Center(child: CircularProgressIndicator());
           }
           if (state is JournalScreenError) {
             return Center(
@@ -109,8 +107,7 @@ class _JournalScreenState extends State<JournalScreen> {
                                 counter: counter,
                                 allUsers: const [],
                                 points: const [],
-                                onTap: editPointValue)
-                            ),
+                                onTap: editPointValue)),
                       ),
                     ],
                   ),

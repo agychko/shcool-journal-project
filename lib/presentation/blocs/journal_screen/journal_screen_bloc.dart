@@ -26,7 +26,10 @@ class JournalScreenBloc extends Bloc<JournalScreenEvent, JournalScreenState> {
     if (usersData.isSuccess()) {
       var usersList = usersData.asSuccess().data;
       emit(JournalScreenSuccess(usersList));
+    } else {
+      emit(JournalScreenError(usersData
+          .asError()
+          .errorMessage));
     }
-    emit(JournalScreenError(usersData.asError().errorMessage));
   }
 }
