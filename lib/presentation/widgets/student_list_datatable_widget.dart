@@ -46,7 +46,7 @@ class StudentListDataTableWidgetState extends State<StudentListDataTableWidget> 
         )
       ];
 
-  List<DataRow> getRows(List<User> usersData) =>
+  List<DataRow> getRows(List usersData) =>
       List.generate(usersData.length, (index) {
         int number = index + 1;
         return DataRow(cells: [
