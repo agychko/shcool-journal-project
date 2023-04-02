@@ -16,6 +16,14 @@ class ApiLesson {
     contents = json['contents'];
     homeTask = json['homeTask'];
   }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'dateTime': dateTime,
+      'contents': contents,
+      'homeTask': homeTask,
+    };
+  }
 }
 
 class ApiLessonsList {
