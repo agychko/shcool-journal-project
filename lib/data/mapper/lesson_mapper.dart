@@ -10,4 +10,13 @@ class LessonMapper {
         homeTask: apiLesson.homeTask!,
     );
   }
+
+  static ApiLesson toApi(LessonData lessonData) {
+    return ApiLesson(
+        id: '',
+        dateTime: lessonData.dateTime.toString(),
+        contents: lessonData.contents,
+        homeTask: lessonData.homeTask
+    );
+  }
 }
