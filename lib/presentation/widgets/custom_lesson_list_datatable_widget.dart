@@ -1,10 +1,17 @@
 import 'package:flutter/material.dart';
 
+import '../../domain/entities/lesson_data.dart';
+
 class CustomLessonListDataTableWidget extends StatefulWidget {
-  final int counter;
+  final List<LessonData> lessonData;
+  final Function(LessonData lessonData) editContents;
+  final Function(LessonData lessonData) editHomeTask;
 
   const CustomLessonListDataTableWidget(
-      {Key? key, required this.counter})
+      {Key? key,
+      required this.lessonData,
+      required this.editContents,
+      required this.editHomeTask})
       : super(key: key);
 
   @override
@@ -16,10 +23,11 @@ class _CustomLessonListDataTableWidgetState
     extends State<CustomLessonListDataTableWidget> {
   @override
   Widget build(BuildContext context) {
+    final double width = MediaQuery.of(context).size.width;
     return DataTable(
       columnSpacing: 0,
-      dataRowHeight: 30,
-      headingRowHeight: 60,
+      dataRowHeight: 70,
+      headingRowHeight: 70,
       headingRowColor: MaterialStateProperty.all(Colors.green[300]),
       horizontalMargin: 10,
       decoration: const BoxDecoration(
@@ -30,81 +38,64 @@ class _CustomLessonListDataTableWidgetState
           ),
         ),
       ),
-      columns: getColumns(),
-      rows: getRows(widget.counter),
+      columns: getColumn(width),
+      rows: getRows(widget.lessonData, width),
     );
   }
 
-  List<DataColumn> getColumns() => const [
-        // DataColumn(
-        //   label: SizedBox(
-        //       width: 20,
-        //       child: Text(
-        //         'N',
-        //         textAlign: TextAlign.center,
-        //       )),
-        // ),
-    // DataColumn(
-    //     label: VerticalDivider(
-    //       color: Colors.grey,
-    //       thickness: 1,
-    //     )),
-    //     DataColumn(
-    //       label: SizedBox(
-    //           width: 40,
-    //           child: Text(
-    //             'Date',
-    //             textAlign: TextAlign.center,
-    //           )),
-    //     ),
-    // DataColumn(
-    //     label: VerticalDivider(
-    //       color: Colors.grey,
-    //       thickness: 1,
-    //     )),
-        DataColumn(
-          label: SizedBox(
-              width: 200,
-              child: Text(
-                'Contents',
-                textAlign: TextAlign.center,
-              )),
-        ),
-    DataColumn(
-        label: VerticalDivider(
-          color: Colors.grey,
-          thickness: 1,
-        )),
-        DataColumn(
-          label: SizedBox(
-              width: 100,
-              child: Text(
-                'Home Task',
-                textAlign: TextAlign.center,
-              )),
-        ),
-      ];
+  List<DataColumn> getColumn(double width) {
+    double flex = width - 280;
+    return [
+      DataColumn(
+        label: SizedBox(
+            width: flex,
+            child: const Text(
+              'Contents',
+              textAlign: TextAlign.center,
+            )),
+      ),
+      const DataColumn(
+          label: VerticalDivider(
+        color: Colors.grey,
+        thickness: 1,
+      )),
+      const DataColumn(
+        label: SizedBox(
+            width: 140, child: Text('Home task', textAlign: TextAlign.center)),
+      )
+    ];
+  }
 
-  List<DataRow> getRows(int counter) =>
-      List.generate(counter, (index) {
-        // int number = index + 1;
-        return const DataRow(cells: [
-          // DataCell(Text('$number.')),
-          // const DataCell(VerticalDivider(
-          //   color: Colors.grey,
-          //   thickness: 1,
-          // )),
-          // const DataCell(Text('')),
-          // const DataCell(VerticalDivider(
-          //   color: Colors.grey,
-          //   thickness: 1,
-          // )),
-           DataCell(Text('')),
-           DataCell(VerticalDivider(
+  List<DataRow> getRows(List<LessonData> lessonData, double width) =>
+      List.generate(lessonData.length, (index) {
+        double flex = width - 280;
+        return DataRow(cells: [
+          DataCell(
+            SizedBox(
+                width: flex,
+                child: Text(
+                  lessonData[index].contents,
+                  maxLines: 4,
+                )),
+            onTap: () {
+              widget.editContents(lessonData[index]);
+            },
+          ),
+          const DataCell(VerticalDivider(
             color: Colors.grey,
             thickness: 1,
           )),
-           DataCell(Text('')),
+          DataCell(
+            SizedBox(
+                width: 140,
+                child: Text(
+                  lessonData[index].homeTask,
+                  maxLines: 4,
+                )),
+            onTap: () {
+              widget.editHomeTask(lessonData[index]);
+            },
+          ),
         ]);
       });
 }

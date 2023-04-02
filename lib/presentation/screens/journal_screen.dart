@@ -7,7 +7,7 @@ import 'package:linked_scroll_controller/linked_scroll_controller.dart';
 import '../../domain/entities/point.dart';
 import '../../domain/entities/user.dart';
 import '../widgets/points_datatable_widget.dart';
-import '../widgets/text_dialog_widget.dart';
+import '../widgets/edit_point_dialog_widget.dart';
 
 class JournalScreen extends StatefulWidget {
   const JournalScreen({super.key, required this.title});
@@ -25,12 +25,6 @@ class _JournalScreenState extends State<JournalScreen> {
   late ScrollController headerScrollController;
   late ScrollController dataScrollController;
   late List<Point> points;
-
-  void _incrementCounter() {
-    setState(() {
-      counter++;
-    });
-  }
 
   Future editPointValue(Point editPoint, User user) async {
     final pointValue = await showTextDialog(
@@ -86,7 +80,7 @@ class _JournalScreenState extends State<JournalScreen> {
                             scrollDirection: Axis.horizontal,
                             controller: dataScrollController,
                             child: PointsDataTableWidget(
-                              counter: counter,
+                              allLessons: state.lessonData,
                               allUsers: state.usersData,
                               points: points,
                               onTap: editPointValue,
@@ -104,7 +98,7 @@ class _JournalScreenState extends State<JournalScreen> {
                             scrollDirection: Axis.horizontal,
                             controller: headerScrollController,
                             child: PointsDataTableWidget(
-                                counter: counter,
+                                allLessons: state.lessonData,
                                 allUsers: const [],
                                 points: const [],
                                 onTap: editPointValue)),
@@ -117,10 +111,6 @@ class _JournalScreenState extends State<JournalScreen> {
           }
           return const Center(child: Text('Internal Error'));
         },
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
-        child: const Icon(Icons.add),
       ),
     );
   }

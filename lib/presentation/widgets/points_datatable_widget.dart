@@ -1,26 +1,27 @@
 import 'package:flutter/material.dart';
+import 'package:journal/domain/entities/lesson_data.dart';
 
 import '../../domain/entities/point.dart';
 import '../../domain/entities/user.dart';
 
 class PointsDataTableWidget extends StatefulWidget {
-  final int counter;
+  final List<LessonData> allLessons;
   final List<User> allUsers;
   final List<Point> points;
   final Function(Point, User) onTap;
 
   const PointsDataTableWidget(
       {super.key,
-      required this.counter,
       required this.allUsers,
-      required this.points, required this.onTap});
+      required this.points,
+      required this.onTap,
+      required this.allLessons});
 
   @override
   PointsDataTableWidgetState createState() => PointsDataTableWidgetState();
 }
 
 class PointsDataTableWidgetState extends State<PointsDataTableWidget> {
-
   @override
   Widget build(BuildContext context) {
     return DataTable(
@@ -36,24 +37,39 @@ class PointsDataTableWidgetState extends State<PointsDataTableWidget> {
       columnSpacing: 0,
       horizontalMargin: 0,
       dataRowHeight: 30,
-      headingRowHeight: 60,
-      columns: getColumns(widget.counter),
-      rows: getRows(widget.counter, widget.allUsers, widget.points),
+      headingRowHeight: 70,
+      columns: getColumns(widget.allLessons),
+      rows: getRows(widget.allLessons, widget.allUsers, widget.points),
     );
   }
 
-  List<DataColumn> getColumns(int counter) => List.generate(
-        counter,
+  List<DataColumn> getColumns(List<LessonData> allLessons) => List.generate(
+        allLessons.length,
         (index) => DataColumn(
             label: Row(children: [
           SizedBox(
-              width: 30, child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.center,
+              width: 30,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                // crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  Text('0$index', textAlign: TextAlign.center),
-                  const Divider(color: Colors.black, thickness: 0.5, indent: 7, endIndent: 7, height: 5,),
-                  const Text('03', textAlign: TextAlign.center),
+                  Text(
+                      allLessons[index].dateTime.day.toString().padLeft(2, '0'),
+                      textAlign: TextAlign.center),
+                  const Divider(
+                    color: Colors.black,
+                    thickness: 0.5,
+                    indent: 7,
+                    endIndent: 7,
+                    height: 5,
+                  ),
+                  Text(
+                      allLessons[index]
+                          .dateTime
+                          .month
+                          .toString()
+                          .padLeft(2, '0'),
+                      textAlign: TextAlign.center),
                 ],
               )),
           const SizedBox(
@@ -63,13 +79,14 @@ class PointsDataTableWidgetState extends State<PointsDataTableWidget> {
         ])),
       );
 
-  List<DataRow> getRows(int counter, List<User> allUsers, List<Point> points) =>
+  List<DataRow> getRows(List<LessonData> allLessons, List<User> allUsers,
+          List<Point> points) =>
       List.generate(
         allUsers.length,
         (index) {
           User user = allUsers[index];
           return DataRow(
-            cells: List.generate(counter, (index) {
+            cells: List.generate(allLessons.length, (index) {
               Point point = points.firstWhere(
                 (element) => element.userId == user.id && element.date == index,
                 orElse: () {
@@ -98,6 +115,4 @@ class PointsDataTableWidgetState extends State<PointsDataTableWidget> {
           );
         },
       );
-
-
 }

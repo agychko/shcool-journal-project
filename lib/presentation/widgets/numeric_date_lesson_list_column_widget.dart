@@ -1,23 +1,25 @@
 import 'package:flutter/material.dart';
-import 'package:journal/domain/entities/user.dart';
+import 'package:journal/domain/entities/lesson_data.dart';
 
-class StudentListDataTableWidget extends StatefulWidget {
-  final List<User> usersList;
+class NumericDateColumnWidget extends StatefulWidget {
+  final List<LessonData> lessonData;
+  final Function(LessonData lessonData) onTap;
 
-  const StudentListDataTableWidget({super.key, required this.usersList});
+  const NumericDateColumnWidget(
+      {Key? key, required this.lessonData, required this.onTap})
+      : super(key: key);
 
   @override
-  StudentListDataTableWidgetState createState() =>
-      StudentListDataTableWidgetState();
+  State<NumericDateColumnWidget> createState() =>
+      _NumericDateColumnWidgetState();
 }
 
-class StudentListDataTableWidgetState
-    extends State<StudentListDataTableWidget> {
+class _NumericDateColumnWidgetState extends State<NumericDateColumnWidget> {
   @override
   Widget build(BuildContext context) {
     return DataTable(
       columnSpacing: 0,
-      dataRowHeight: 30,
+      dataRowHeight: 70,
       headingRowHeight: 70,
       headingRowColor: MaterialStateProperty.all(Colors.green[300]),
       horizontalMargin: 10,
@@ -30,7 +32,7 @@ class StudentListDataTableWidgetState
         ),
       ),
       columns: getColumns(),
-      rows: getRows(widget.usersList),
+      rows: getRows(widget.lessonData),
     );
   }
 
@@ -42,7 +44,7 @@ class StudentListDataTableWidgetState
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: const [
                   Text('№', textAlign: TextAlign.center),
-                  Text('o/l', textAlign: TextAlign.center),
+                  Text('o/l', textAlign: TextAlign.center)
                 ],
               )),
         ),
@@ -53,13 +55,16 @@ class StudentListDataTableWidgetState
         )),
         const DataColumn(
           label: SizedBox(
-              width: 140,
-              child: Text("Name and surname student", overflow: TextOverflow.ellipsis, maxLines: 3)),
+              width: 45,
+              child: Text(
+                'Date',
+                textAlign: TextAlign.center,
+              )),
         )
       ];
 
-  List<DataRow> getRows(List usersData) =>
-      List.generate(usersData.length, (index) {
+  List<DataRow> getRows(List<LessonData> lessonData) =>
+      List.generate(lessonData.length, (index) {
         int number = index + 1;
         return DataRow(cells: [
           DataCell(Text('$number.')),
@@ -67,11 +72,18 @@ class StudentListDataTableWidgetState
             color: Colors.grey,
             thickness: 1,
           )),
-          DataCell(SizedBox(
-            width: 140,
-            child: Text(
-                '${usersData[index].lastName} ${usersData[index].firstName}'),
-          ))
+          DataCell(
+            SizedBox(
+              width: 45,
+              child: Text(
+                  '${lessonData[index].dateTime.day.toString().padLeft(2, '0')} / '
+                  '${lessonData[index].dateTime.month.toString().padLeft(2, '0')}',
+                  textAlign: TextAlign.center),
+            ),
+            onTap: () {
+              widget.onTap(lessonData[index]);
+            },
+          )
         ]);
       });
 }

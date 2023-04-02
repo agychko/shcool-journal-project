@@ -4,3 +4,5 @@ part of 'journal_screen_bloc.dart';
 abstract class JournalScreenEvent {}
 
 class GetUsersList extends JournalScreenEvent {}
+
+class GetLessonsList extends JournalScreenEvent {}
