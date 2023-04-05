@@ -17,8 +17,17 @@ class ApiLesson {
     homeTask = json['homeTask'];
   }
 
-  Map<String, dynamic> toJson() {
+  Map<String, dynamic> toCreateJson() {
     return {
+      'dateTime': dateTime,
+      'contents': contents,
+      'homeTask': homeTask,
+    };
+  }
+
+  Map<String, dynamic> toUpdateJson() {
+    return {
+      '_id': id,
       'dateTime': dateTime,
       'contents': contents,
       'homeTask': homeTask,

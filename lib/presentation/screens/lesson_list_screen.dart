@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:journal/data/local/lessons.dart';
 import 'package:journal/domain/entities/lesson_data.dart';
 import 'package:journal/presentation/widgets/custom_lesson_list_datatable_widget.dart';
 import 'package:journal/presentation/widgets/numeric_date_lesson_list_column_widget.dart';
@@ -16,126 +15,117 @@ class LessonListScreen extends StatefulWidget {
 }
 
 class _LessonListScreenState extends State<LessonListScreen> {
-  int counter = 1;
-  late List<LessonData> lessons;
-
   Future editLessonDate(LessonData editLesson) async {
     final newDate = await showDatePicker(
       context: context,
-      initialDate: editLesson.dateTime,
-      firstDate: DateTime(2022, 1, 1),
+      initialDate: editLesson.dateTime.toLocal(),
+      firstDate: DateTime(DateTime.now().year-1, 9, 1),
       lastDate: DateTime.now(),
     );
-    setState(() =>
-    lessons = lessons.map((lesson) {
-      final isEditedLesson = lesson == editLesson;
-      return isEditedLesson ? lesson.copy(dateTime: newDate) : lesson;
-    }).toList());
+    if (newDate != null) {
+
+      if (context.mounted) {
+        context
+            .read<JournalScreenBloc>()
+            .add(EditLessonDate(editLesson, newDate));
+      }
+    }
   }
 
-  Future editLessonTheme(LessonData editLesson) async {
-    final lessonTheme = await showEditLessonDialog(
+  Future editLessonContents(LessonData editLesson) async {
+    final newLessonContents = await showEditLessonDialog(
       context,
       title: 'Edit Lesson Theme',
       value: editLesson.contents,
     );
-
-    setState(() =>
-    lessons = lessons.map((lesson) {
-      final isEditedLesson = lesson == editLesson;
-      return isEditedLesson ? lesson.copy(contents: lessonTheme) : lesson;
-    }).toList());
+    if (newLessonContents != null) {
+      if (context.mounted) {
+        context
+            .read<JournalScreenBloc>()
+            .add(EditLessonContents(editLesson, newLessonContents));
+      }
+    }
   }
 
   Future editLessonHomeTask(LessonData editLesson) async {
-    final lessonHomeTask = await showEditLessonDialog(
+    final newLessonHomeTask = await showEditLessonDialog(
       context,
       title: 'Edit Lesson Home Task',
       value: editLesson.homeTask,
     );
-    setState(() =>
-    lessons = lessons.map((lesson) {
-      final isEditedLesson = lesson == editLesson;
-      return isEditedLesson ? lesson.copy(homeTask: lessonHomeTask) : lesson;
-    }).toList());
-  }
-
-  void _incrementCounter() {
-    setState(() {
-      lessons.add(LessonData(dateTime: DateTime.now(),
-          contents: 'Add contents',
-          homeTask: 'Add homeTask'));
-    });
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    lessons = List.of(allLessons);
+    if (newLessonHomeTask != null) {
+      if (context.mounted) {
+        context
+            .read<JournalScreenBloc>()
+            .add(EditLessonHomeTask(editLesson, newLessonHomeTask));
+      }
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Lesson List'),
-      ),
-      body: BlocBuilder<JournalScreenBloc, JournalScreenState>(
-        builder: (context, state) {
-          if (state is JournalScreenLoading) {
-            return const Center(child: CircularProgressIndicator());
-          }
-          if (state is JournalScreenError) {
-            return Center(
-              child: AlertDialog(
-                title: const Text('Error'),
-                content: Text(state.errorMessage),
-              ),
-            );
-          }
-          if (state is JournalScreenSuccess) {
-          return SafeArea(
-            child: Stack(
-              children: [
-                SingleChildScrollView(
-                  child: Row(
+    return BlocBuilder<JournalScreenBloc, JournalScreenState>(
+      builder: (context, state) {
+        if (state is JournalScreenLoading) {
+          return const Center(child: CircularProgressIndicator());
+        }
+        if (state is JournalScreenError) {
+          return Center(
+            child: AlertDialog(
+              title: const Text('Error'),
+              content: Text(state.errorMessage),
+            ),
+          );
+        }
+        if (state is JournalScreenSuccess) {
+          return Scaffold(
+            appBar: AppBar(
+              title: const Text('Lesson List'),
+            ),
+            body: SafeArea(
+              child: Stack(
+                children: [
+                  SingleChildScrollView(
+                    child: Row(
+                      children: [
+                        NumericDateColumnWidget(
+                          lessonData: state.lessonData,
+                          onTap: editLessonDate,
+                        ),
+                        CustomLessonListDataTableWidget(
+                          lessonData: state.lessonData,
+                          editContents: editLessonContents,
+                          editHomeTask: editLessonHomeTask,
+                        ),
+                      ],
+                    ),
+                  ),
+                  Row(
                     children: [
                       NumericDateColumnWidget(
-                        lessonData: state.lessonData,
+                        lessonData: const [],
                         onTap: editLessonDate,
                       ),
                       CustomLessonListDataTableWidget(
-                        lessonData: state.lessonData,
-                        editContents: editLessonTheme,
+                        lessonData: const [],
+                        editContents: editLessonContents,
                         editHomeTask: editLessonHomeTask,
                       ),
                     ],
                   ),
-                ),
-                Row(
-                  children: [
-                    NumericDateColumnWidget(
-                      lessonData: const [],
-                      onTap: editLessonDate,
-                    ),
-                    CustomLessonListDataTableWidget(
-                      lessonData: const [],
-                      editContents: editLessonTheme,
-                      editHomeTask: editLessonHomeTask,
-                    ),
-                  ],
-                ),
-              ],
+                ],
+              ),
+            ),
+            floatingActionButton: FloatingActionButton(
+              onPressed: () {
+                context.read<JournalScreenBloc>().add(AddLesson());
+              },
+              child: const Icon(Icons.add),
             ),
           );
-          }
-          return const Center(child: Text('Internal Error'));
-        },
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
-        child: const Icon(Icons.add),
-      ),
+        }
+        return const Center(child: Text('Internal Error'));
+      },
     );
   }
 }

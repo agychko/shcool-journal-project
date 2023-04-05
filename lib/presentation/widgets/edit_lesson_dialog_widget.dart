@@ -6,11 +6,10 @@ Future<T?> showEditLessonDialog<T>(BuildContext context, {
 }) =>
     showDialog<T>(
       context: context,
-      builder: (context) =>
-          EditLessonDialogWidget(
-            title: title,
-            value: value,
-          ),
+      builder: (context) => EditLessonDialogWidget(
+        title: title,
+        value: value,
+      )
     );
 
 class EditLessonDialogWidget extends StatefulWidget {

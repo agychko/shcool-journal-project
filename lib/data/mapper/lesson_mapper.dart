@@ -5,18 +5,18 @@ import '../remote/model/api_lesson.dart';
 class LessonMapper {
   static LessonData fromApi(ApiLesson apiLesson) {
     return LessonData(
-        dateTime: DateTime.tryParse(apiLesson.dateTime!)!,
-        contents: apiLesson.contents!,
-        homeTask: apiLesson.homeTask!,
+      id: apiLesson.id!,
+      dateTime: DateTime.tryParse(apiLesson.dateTime!)!,
+      contents: apiLesson.contents!,
+      homeTask: apiLesson.homeTask!,
     );
   }
 
   static ApiLesson toApi(LessonData lessonData) {
     return ApiLesson(
-        id: '',
+        id: lessonData.id,
         dateTime: lessonData.dateTime.toString(),
         contents: lessonData.contents,
-        homeTask: lessonData.homeTask
-    );
+        homeTask: lessonData.homeTask);
   }
 }

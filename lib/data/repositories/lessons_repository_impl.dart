@@ -19,4 +19,14 @@ class LessonsRepositoryImpl extends LessonsRepository {
     }
   }
 
+  @override
+  void setApiLesson(LessonData lessonData) async {
+    _lessonApiSource.setApiLesson(lessonData);
+  }
+
+  @override
+  void updateApiLesson(LessonData lessonData) async {
+    _lessonApiSource.updateApiLesson(lessonData);
+  }
+
 }

@@ -1,22 +1,26 @@
 class Point {
+  final String id;
   final String value;
-  final int date;
+  final String lessonId;
   final String userId;
 
   const Point ({
+    required this.id,
     required this.value,
-    required this.date,
+    required this.lessonId,
     required this.userId,
 });
 
   Point copy({
+    String? id,
     String? value,
-    int? date,
+    String? lessonId,
     String? userId,
   }) =>
       Point(
+        id: id ?? this.id,
         value: value ?? this.value,
-        date: date ?? this.date,
+        lessonId: lessonId ?? this.lessonId,
         userId: userId ?? this.userId,
       );
 

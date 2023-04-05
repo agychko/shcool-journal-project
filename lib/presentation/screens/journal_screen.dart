@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:journal/data/local/points.dart';
 import 'package:journal/presentation/blocs/journal_screen/journal_screen_bloc.dart';
 import 'package:journal/presentation/widgets/student_list_datatable_widget.dart';
 import 'package:linked_scroll_controller/linked_scroll_controller.dart';
@@ -32,12 +31,18 @@ class _JournalScreenState extends State<JournalScreen> {
       title: '${user.firstName} ${user.lastName} Point',
       value: editPoint.value,
     );
-
-    setState(() => points = points.map((point) {
-          final isEditedPoint = point == editPoint;
-
-          return isEditedPoint ? point.copy(value: pointValue) : point;
-        }).toList());
+    if (pointValue != null) {
+      if (context.mounted) {
+        context
+            .read<JournalScreenBloc>()
+            .add(AddPoint(editPoint, pointValue));
+      }
+    }
+    // setState(() => points = points.map((point) {
+    //       final isEditedPoint = point == editPoint;
+    //
+    //       return isEditedPoint ? point.copy(value: pointValue) : point;
+    //     }).toList());
   }
 
   @override
@@ -45,7 +50,7 @@ class _JournalScreenState extends State<JournalScreen> {
     super.initState();
     headerScrollController = controllerGroup.addAndGet();
     dataScrollController = controllerGroup.addAndGet();
-    points = List.of(allPoints);
+    // points = List.of(allPoints);
   }
 
   @override
@@ -82,7 +87,7 @@ class _JournalScreenState extends State<JournalScreen> {
                             child: PointsDataTableWidget(
                               allLessons: state.lessonData,
                               allUsers: state.usersData,
-                              points: points,
+                              points: state.pointsData,
                               onTap: editPointValue,
                             ),
                           ),

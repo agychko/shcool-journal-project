@@ -76,12 +76,12 @@ class _NumericDateColumnWidgetState extends State<NumericDateColumnWidget> {
             SizedBox(
               width: 45,
               child: Text(
-                  '${lessonData[index].dateTime.day.toString().padLeft(2, '0')} / '
-                  '${lessonData[index].dateTime.month.toString().padLeft(2, '0')}',
+                  '${lessonData[index].dateTime.toLocal().day.toString().padLeft(2, '0')} / '
+                  '${lessonData[index].dateTime.toLocal().month.toString().padLeft(2, '0')}',
                   textAlign: TextAlign.center),
             ),
             onTap: () {
-              widget.onTap(lessonData[index]);
+                widget.onTap(lessonData[index]);
             },
           )
         ]);

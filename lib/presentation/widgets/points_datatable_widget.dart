@@ -54,7 +54,12 @@ class PointsDataTableWidgetState extends State<PointsDataTableWidget> {
                 // crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   Text(
-                      allLessons[index].dateTime.day.toString().padLeft(2, '0'),
+                      allLessons[index]
+                          .dateTime
+                          .toLocal()
+                          .day
+                          .toString()
+                          .padLeft(2, '0'),
                       textAlign: TextAlign.center),
                   const Divider(
                     color: Colors.black,
@@ -66,6 +71,7 @@ class PointsDataTableWidgetState extends State<PointsDataTableWidget> {
                   Text(
                       allLessons[index]
                           .dateTime
+                          .toLocal()
                           .month
                           .toString()
                           .padLeft(2, '0'),
@@ -87,10 +93,13 @@ class PointsDataTableWidgetState extends State<PointsDataTableWidget> {
           User user = allUsers[index];
           return DataRow(
             cells: List.generate(allLessons.length, (index) {
+              LessonData lesson = allLessons[index];
               Point point = points.firstWhere(
-                (element) => element.userId == user.id && element.date == index,
+                (element) =>
+                    element.userId == user.id && element.lessonId == lesson.id,
                 orElse: () {
-                  Point point = Point(value: '', date: index, userId: user.id);
+                  Point point = Point(
+                      id: '', value: '', lessonId: lesson.id, userId: user.id);
                   points.add(point);
                   return point;
                 },
@@ -108,7 +117,9 @@ class PointsDataTableWidgetState extends State<PointsDataTableWidget> {
                 // showEditIcon: true,
                 // placeholder: true,
                 onTap: () {
-                  widget.onTap(point, user);
+                  if (point.value=='') {
+                    widget.onTap(point, user);
+                  }
                 },
               );
             }),

@@ -78,7 +78,7 @@ class _CustomLessonListDataTableWidgetState
                   maxLines: 4,
                 )),
             onTap: () {
-              widget.editContents(lessonData[index]);
+                widget.editContents(lessonData[index]);
             },
           ),
           const DataCell(VerticalDivider(
@@ -93,7 +93,7 @@ class _CustomLessonListDataTableWidgetState
                   maxLines: 4,
                 )),
             onTap: () {
-              widget.editHomeTask(lessonData[index]);
+                widget.editHomeTask(lessonData[index]);
             },
           ),
         ]);

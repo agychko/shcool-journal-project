@@ -20,7 +20,7 @@ class UserApiSource {
       var jsonResponse = jsonDecode(response.body);
       var apiUsersList = ApiUsersList.fromJson(jsonResponse);
       return Future.delayed(
-        const Duration(milliseconds: 500),
+        const Duration(milliseconds: 200),
         () => DataResponse.success(
           List.generate(
               apiUsersList.apiUsers.length,
