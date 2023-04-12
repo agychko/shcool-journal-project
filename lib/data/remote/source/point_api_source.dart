@@ -3,11 +3,12 @@ import 'dart:convert';
 
 import 'package:journal/domain/entities/point.dart';
 import 'package:http/http.dart' as http;
+import 'package:journal/utils/server.dart';
 import '../../mapper/point_mapper.dart';
 import '../../response/data_response.dart';
 import '../model/api_point.dart';
 
-const String server = 'http://localhost:3000';
+const String server = appServer;
 class PointApiSource {
   Future<DataResponse<List<Point>>> getPointsList() async {
     try {

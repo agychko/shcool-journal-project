@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:journal/domain/entities/lesson_data.dart';
-import 'package:journal/presentation/widgets/custom_lesson_list_datatable_widget.dart';
-import 'package:journal/presentation/widgets/numeric_date_lesson_list_column_widget.dart';
+import 'package:journal/presentation/widgets/one_line_title_column.dart';
+import 'package:journal/presentation/widgets/text_dialog_widget.dart';
+import 'package:journal/utils/identifier.dart';
 
 import '../blocs/journal_screen/journal_screen_bloc.dart';
-import '../widgets/edit_lesson_dialog_widget.dart';
 
 class LessonListScreen extends StatefulWidget {
   const LessonListScreen({Key? key}) : super(key: key);
@@ -15,15 +14,20 @@ class LessonListScreen extends StatefulWidget {
 }
 
 class _LessonListScreenState extends State<LessonListScreen> {
-  Future editLessonDate(LessonData editLesson) async {
+  ScrollController lessonController = ScrollController();
+
+  Future editLessonDate(String id) async {
+    var editLesson = context
+        .read<JournalScreenBloc>()
+        .lessons
+        .firstWhere((element) => element.id == id);
     final newDate = await showDatePicker(
       context: context,
       initialDate: editLesson.dateTime.toLocal(),
-      firstDate: DateTime(DateTime.now().year-1, 9, 1),
+      firstDate: DateTime(DateTime.now().year - 1, 9, 1),
       lastDate: DateTime.now(),
     );
     if (newDate != null) {
-
       if (context.mounted) {
         context
             .read<JournalScreenBloc>()
@@ -32,11 +36,21 @@ class _LessonListScreenState extends State<LessonListScreen> {
     }
   }
 
-  Future editLessonContents(LessonData editLesson) async {
-    final newLessonContents = await showEditLessonDialog(
+  Future editLessonContents(String id) async {
+    var editLesson = context
+        .read<JournalScreenBloc>()
+        .lessons
+        .firstWhere((element) => element.id == id);
+    final newLessonContents = await showTextDialog(
       context,
       title: 'Edit Lesson Theme',
       value: editLesson.contents,
+      validator: (String? value) {
+        if (value == null || value.isEmpty) {
+          return 'Please enter some text';
+        }
+        return null;
+      },
     );
     if (newLessonContents != null) {
       if (context.mounted) {
@@ -47,11 +61,21 @@ class _LessonListScreenState extends State<LessonListScreen> {
     }
   }
 
-  Future editLessonHomeTask(LessonData editLesson) async {
-    final newLessonHomeTask = await showEditLessonDialog(
+  Future editLessonHomeTask(String id) async {
+    var editLesson = context
+        .read<JournalScreenBloc>()
+        .lessons
+        .firstWhere((element) => element.id == id);
+    final newLessonHomeTask = await showTextDialog(
       context,
       title: 'Edit Lesson Home Task',
       value: editLesson.homeTask,
+      validator: (String? value) {
+        if (value == null || value.isEmpty) {
+          return 'Please enter some text';
+        }
+        return null;
+      },
     );
     if (newLessonHomeTask != null) {
       if (context.mounted) {
@@ -78,6 +102,13 @@ class _LessonListScreenState extends State<LessonListScreen> {
           );
         }
         if (state is JournalScreenSuccess) {
+          Future.delayed(Duration.zero, () {
+            lessonController.animateTo(
+                lessonController.position.maxScrollExtent,
+                duration: const Duration(milliseconds: 500),
+                curve: Curves.linear
+            );
+          });
           return Scaffold(
             appBar: AppBar(
               title: const Text('Lesson List'),
@@ -86,31 +117,78 @@ class _LessonListScreenState extends State<LessonListScreen> {
               child: Stack(
                 children: [
                   SingleChildScrollView(
+                    controller: lessonController,
                     child: Row(
                       children: [
-                        NumericDateColumnWidget(
-                          lessonData: state.lessonData,
+                        OneLineTitleColumn(
+                          titleColumn: 'N o/l',
+                          rowsData: List.generate(
+                              state.lessonData.length,
+                              (index) => Identifier(
+                                  state.lessonData[index].id, '${index + 1}.')),
+                          width: 20,
+                          dataRowHeight: 70,
+                          onTap: (onTap) => null,
+                        ),
+                        OneLineTitleColumn(
+                          titleColumn: 'Date',
+                          rowsData: List.generate(
+                              state.lessonData.length,
+                              (index) => Identifier(
+                                  state.lessonData[index].id,
+                                  '${state.lessonData[index].dateTime.toLocal().day.toString().padLeft(2, '0')} / '
+                                  '${state.lessonData[index].dateTime.toLocal().month.toString().padLeft(2, '0')}')),
+                          width: 45,
+                          dataRowHeight: 70,
                           onTap: editLessonDate,
                         ),
-                        CustomLessonListDataTableWidget(
-                          lessonData: state.lessonData,
-                          editContents: editLessonContents,
-                          editHomeTask: editLessonHomeTask,
+                        OneLineTitleColumn(
+                          titleColumn: 'Contents',
+                          rowsData: state.lessonData
+                              .map((e) => Identifier(e.id, e.contents))
+                              .toList(),
+                          width: MediaQuery.of(context).size.width - 289,
+                          dataRowHeight: 70,
+                          onTap: editLessonContents,
+                        ),
+                        OneLineTitleColumn(
+                          titleColumn: 'Home Task',
+                          rowsData: state.lessonData
+                              .map((e) => Identifier(e.id, e.homeTask))
+                              .toList(),
+                          width: 140,
+                          dataRowHeight: 70,
+                          onTap: editLessonHomeTask,
                         ),
                       ],
                     ),
                   ),
                   Row(
                     children: [
-                      NumericDateColumnWidget(
-                        lessonData: const [],
-                        onTap: editLessonDate,
-                      ),
-                      CustomLessonListDataTableWidget(
-                        lessonData: const [],
-                        editContents: editLessonContents,
-                        editHomeTask: editLessonHomeTask,
-                      ),
+                      OneLineTitleColumn(
+                          titleColumn: 'N o/l',
+                          rowsData: const [],
+                          width: 20,
+                          dataRowHeight: 70,
+                          onTap: (onTap) => null),
+                      OneLineTitleColumn(
+                          titleColumn: 'Date',
+                          rowsData: const [],
+                          width: 45,
+                          dataRowHeight: 70,
+                          onTap: (onTap) => null),
+                      OneLineTitleColumn(
+                          titleColumn: 'Contents',
+                          rowsData: const [],
+                          width: MediaQuery.of(context).size.width - 289,
+                          dataRowHeight: 70,
+                          onTap: (onTap) => null),
+                      OneLineTitleColumn(
+                          titleColumn: 'Home Task',
+                          rowsData: const [],
+                          width: 140,
+                          dataRowHeight: 70,
+                          onTap: (onTap) => null),
                     ],
                   ),
                 ],

@@ -5,10 +5,11 @@ import 'package:journal/data/remote/model/api_user.dart';
 
 import 'package:http/http.dart' as http;
 import 'package:journal/data/response/data_response.dart';
+import 'package:journal/utils/server.dart';
 
 import '../../../domain/entities/user.dart';
 
-const String server = 'http://localhost:3000';
+const String server = appServer;
 
 class UserApiSource {
   Future<DataResponse<List<User>>> getUsersList() async {

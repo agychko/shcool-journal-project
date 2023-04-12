@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:journal/presentation/blocs/journal_screen/journal_screen_bloc.dart';
-import 'package:journal/presentation/widgets/student_list_datatable_widget.dart';
+import 'package:journal/presentation/widgets/one_line_title_column.dart';
+import 'package:journal/presentation/widgets/two_line_title_column.dart';
+import 'package:journal/utils/identifier.dart';
+
 import 'package:linked_scroll_controller/linked_scroll_controller.dart';
 import '../../domain/entities/point.dart';
 import '../../domain/entities/user.dart';
-import '../widgets/points_datatable_widget.dart';
-import '../widgets/edit_point_dialog_widget.dart';
+import '../widgets/text_dialog_widget.dart';
 
 class JournalScreen extends StatefulWidget {
   const JournalScreen({super.key, required this.title});
@@ -18,31 +20,51 @@ class JournalScreen extends StatefulWidget {
 }
 
 class _JournalScreenState extends State<JournalScreen> {
-  int counter = 1;
 
   LinkedScrollControllerGroup controllerGroup = LinkedScrollControllerGroup();
-  late ScrollController headerScrollController;
-  late ScrollController dataScrollController;
-  late List<Point> points;
+  ScrollController headerScrollController = ScrollController();
+  ScrollController dataScrollController = ScrollController();
 
-  Future editPointValue(Point editPoint, User user) async {
-    final pointValue = await showTextDialog(
-      context,
-      title: '${user.firstName} ${user.lastName} Point',
-      value: editPoint.value,
-    );
-    if (pointValue != null) {
-      if (context.mounted) {
-        context
-            .read<JournalScreenBloc>()
-            .add(AddPoint(editPoint, pointValue));
+  Future editPointValue(String id) async {
+    Point editPoint = context
+        .read<JournalScreenBloc>()
+        .points
+        .firstWhere((element) => element.id == id);
+    User editUser = context
+        .read<JournalScreenBloc>()
+        .users
+        .firstWhere((element) => element.id == editPoint.userId);
+    if (editPoint.value == '') {
+      final pointValue = await showTextDialog(
+        context,
+        title: '${editUser.firstName} ${editUser.lastName} Point',
+        value: editPoint.value,
+        validator: (value) {
+          if (value != '1' &&
+              value != '2' &&
+              value != '3' &&
+              value != '4' &&
+              value != '5' &&
+              value != '6' &&
+              value != '7' &&
+              value != '8' &&
+              value != '9' &&
+              value != '10' &&
+              value != '11' &&
+              value != '12') {
+            return 'Please enter the correct points';
+          }
+          return null;
+        },
+      );
+      if (pointValue != null) {
+        if (context.mounted) {
+          context
+              .read<JournalScreenBloc>()
+              .add(AddPoint(editPoint, pointValue));
+        }
       }
     }
-    // setState(() => points = points.map((point) {
-    //       final isEditedPoint = point == editPoint;
-    //
-    //       return isEditedPoint ? point.copy(value: pointValue) : point;
-    //     }).toList());
   }
 
   @override
@@ -50,14 +72,24 @@ class _JournalScreenState extends State<JournalScreen> {
     super.initState();
     headerScrollController = controllerGroup.addAndGet();
     dataScrollController = controllerGroup.addAndGet();
-    // points = List.of(allPoints);
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    headerScrollController.dispose();
+    dataScrollController.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(widget.title),
+        title: Row(
+          children: [
+            Text(widget.title),
+          ],
+        ),
       ),
       body: BlocBuilder<JournalScreenBloc, JournalScreenState>(
         builder: (context, state) {
@@ -73,40 +105,119 @@ class _JournalScreenState extends State<JournalScreen> {
             );
           }
           if (state is JournalScreenSuccess) {
+            Future.delayed(Duration.zero, () {
+              controllerGroup.animateTo(
+                  headerScrollController.position.maxScrollExtent,
+                  curve: Curves.linear,
+                  duration: const Duration(milliseconds: 500));
+            });
             return SafeArea(
               child: Stack(
                 children: [
                   SingleChildScrollView(
                     child: Row(
                       children: [
-                        StudentListDataTableWidget(usersList: state.usersData),
+                        OneLineTitleColumn(
+                            titleColumn: 'N o/l',
+                            rowsData: List.generate(
+                                state.usersData.length,
+                                (index) => Identifier(state.usersData[index].id,
+                                    '${index + 1}.')),
+                            width: 20,
+                            dataRowHeight: 30,
+                            onTap: (onTap) => null),
+                        OneLineTitleColumn(
+                            titleColumn: 'Name and Surname students',
+                            rowsData: state.usersData
+                                .map((e) => Identifier(
+                                    e.id, '${e.lastName} ${e.firstName}'))
+                                .toList(),
+                            width: 140,
+                            dataRowHeight: 30,
+                            onTap: (onTap) => null),
                         Expanded(
                           child: SingleChildScrollView(
-                            scrollDirection: Axis.horizontal,
-                            controller: dataScrollController,
-                            child: PointsDataTableWidget(
-                              allLessons: state.lessonData,
-                              allUsers: state.usersData,
-                              points: state.pointsData,
-                              onTap: editPointValue,
-                            ),
-                          ),
+                              scrollDirection: Axis.horizontal,
+                              controller: dataScrollController,
+                              child: Row(
+                                  children: state.lessonData
+                                      .map((lesson) => TwoLineTitleColumn(
+                                          titleNumerator: lesson.dateTime
+                                              .toLocal()
+                                              .day
+                                              .toString()
+                                              .padLeft(2, '0'),
+                                          titleDenominator: lesson.dateTime
+                                              .toLocal()
+                                              .month
+                                              .toString()
+                                              .padLeft(2, '0'),
+                                          rowsData: List.generate(
+                                              state.usersData.length, (index) {
+                                            User user = state.usersData[index];
+                                            Point point = state.pointsData
+                                                .firstWhere(
+                                                    (element) =>
+                                                        element.lessonId ==
+                                                            lesson.id &&
+                                                        element.userId ==
+                                                            user.id,
+                                                    orElse: () {
+                                              Point localPoint = Point(
+                                                  id: '${lesson.id}${user.id}',
+                                                  value: '',
+                                                  lessonId: lesson.id,
+                                                  userId: user.id);
+                                              state.pointsData.add(localPoint);
+                                              return localPoint;
+                                            });
+                                            return Identifier(
+                                                point.id, point.value);
+                                          }),
+                                          width: 30,
+                                          onTap: editPointValue,
+                                          dataRowHeight: 30))
+                                      .toList())),
                         ),
                       ],
                     ),
                   ),
                   Row(
                     children: [
-                      const StudentListDataTableWidget(usersList: []),
+                      OneLineTitleColumn(
+                          titleColumn: 'N o/l',
+                          rowsData: const [],
+                          width: 20,
+                          onTap: (onTap) => null,
+                          dataRowHeight: 30),
+                      OneLineTitleColumn(
+                          titleColumn: 'Name and Surname students',
+                          rowsData: const [],
+                          width: 140,
+                          dataRowHeight: 30,
+                          onTap: (onTap) => null),
                       Expanded(
                         child: SingleChildScrollView(
                             scrollDirection: Axis.horizontal,
                             controller: headerScrollController,
-                            child: PointsDataTableWidget(
-                                allLessons: state.lessonData,
-                                allUsers: const [],
-                                points: const [],
-                                onTap: editPointValue)),
+                            child: Row(
+                                children: state.lessonData
+                                    .map((lesson) => TwoLineTitleColumn(
+                                        titleNumerator: lesson.dateTime
+                                            .toLocal()
+                                            .day
+                                            .toString()
+                                            .padLeft(2, '0'),
+                                        titleDenominator: lesson.dateTime
+                                            .toLocal()
+                                            .month
+                                            .toString()
+                                            .padLeft(2, '0'),
+                                        rowsData: const [],
+                                        width: 30,
+                                        onTap: editPointValue,
+                                        dataRowHeight: 30))
+                                    .toList())),
                       ),
                     ],
                   ),

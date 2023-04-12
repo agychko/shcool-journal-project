@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 Future<T?> showTextDialog<T>(BuildContext context, {
   required String title,
   required String value,
+  required String? Function(String? value)? validator,
 }) =>
     showDialog<T>(
       context: context,
@@ -10,17 +11,21 @@ Future<T?> showTextDialog<T>(BuildContext context, {
           TextDialogWidget(
             title: title,
             value: value,
+            validator: validator,
           ),
     );
 
 class TextDialogWidget extends StatefulWidget {
   final String title;
   final String value;
+  final String? Function(String? value)? validator;
+
 
   const TextDialogWidget({
     Key? key,
     required this.title,
     required this.value,
+    this.validator,
   }) : super(key: key);
 
   @override
@@ -45,13 +50,7 @@ class TextDialogWidgetState extends State<TextDialogWidget> {
         content: Form(
           key: _formKey,
           child: TextFormField(
-            validator: (value){
-              if (value!='1'&&value!='2'&&value!='3'&&value!='4'&&value!='5'&&value!='6'&&
-                  value!='7'&&value!='8'&&value!='9'&&value!='10'&&value!='11'&&value!='12') {
-                return 'Please enter the correct points';
-              }
-              return null;
-            },
+            validator: widget.validator,
             controller: controller,
             keyboardType: TextInputType.number,
             decoration: const InputDecoration(

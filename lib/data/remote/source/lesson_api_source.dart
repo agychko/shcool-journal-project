@@ -4,9 +4,10 @@ import 'package:journal/data/mapper/lesson_mapper.dart';
 import 'package:journal/data/remote/model/api_lesson.dart';
 import 'package:journal/domain/entities/lesson_data.dart';
 import 'package:http/http.dart' as http;
+import 'package:journal/utils/server.dart';
 import '../../response/data_response.dart';
 
-const String server = 'http://localhost:3000';
+const String server = appServer;
 
 class LessonApiSource {
   Future<DataResponse<List<LessonData>>> getLessonsList() async {
