@@ -1,15 +1,16 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:journal/data/remote/source/lesson_api_source.dart';
-import 'package:journal/data/remote/source/point_api_source.dart';
-import 'package:journal/data/remote/source/user_api_source.dart';
+import 'package:journal/data/sources/local/preferences_source.dart';
+import 'package:journal/data/sources/remote/lesson_api_source.dart';
+import 'package:journal/data/sources/remote/point_api_source.dart';
+import 'package:journal/data/sources/remote/user_api_source.dart';
 import 'package:journal/data/repositories/lessons_repository_impl.dart';
 import 'package:journal/data/repositories/points_repository_impl.dart';
 import 'package:journal/data/repositories/user_repository_impl.dart';
 import 'package:journal/domain/entities/point.dart';
 import 'package:meta/meta.dart';
 
-import '../../../domain/entities/lesson_data.dart';
-import '../../../domain/entities/user.dart';
+import '../../../domain/entities/lesson.dart';
+import '../../../domain/entities/student.dart';
 import '../../../domain/repositories/lessons_repository.dart';
 import '../../../domain/repositories/points_repository.dart';
 import '../../../domain/repositories/user_repository.dart';
@@ -19,16 +20,16 @@ part 'journal_screen_event.dart';
 part 'journal_screen_state.dart';
 
 class JournalScreenBloc extends Bloc<JournalScreenEvent, JournalScreenState> {
-  final UserRepository _userRepository = UserRepositoryImpl(UserApiSource());
+  final UserRepository _userRepository = UserRepositoryImpl(UserApiSource(), PreferencesSource());
   final LessonsRepository _lessonsRepository =
       LessonsRepositoryImpl(LessonApiSource());
   final PointsRepository _pointsRepository = PointsRepositoryImpl(PointApiSource());
-  List<LessonData> lessons = [];
-  List<User> users = [];
+  List<Lesson> lessons = [];
+  List<Student> users = [];
   List<Point> points = [];
 
   JournalScreenBloc() : super(JournalScreenInitial()) {
-    on<GetUsersList>((event, emit) => _getUsersList(emit));
+    on<GetUsersList>((event, emit) => _getStudentsList(emit));
     on<AddLesson>((event, emit) => _addLesson(emit));
     on<EditLessonContents>((event, emit) => _editLessonContents(event, emit));
     on<EditLessonHomeTask>((event, emit) => _editLessonHomeTask(event, emit));
@@ -38,7 +39,7 @@ class JournalScreenBloc extends Bloc<JournalScreenEvent, JournalScreenState> {
     add(GetUsersList());
   }
 
-  void _getUsersList(Emitter<JournalScreenState> emit) async {
+  void _getStudentsList(Emitter<JournalScreenState> emit) async {
     emit(JournalScreenLoading());
     var usersData = await _userRepository.getUsersList();
     var lessonsData = await _lessonsRepository.getLessonsList();
@@ -76,9 +77,9 @@ class JournalScreenBloc extends Bloc<JournalScreenEvent, JournalScreenState> {
   }
 
   void _addLesson(Emitter<JournalScreenState> emit) async {
-    final newLessonData = LessonData(
+    final newLesson = Lesson(
         id: '', dateTime: DateTime.now(), contents: '', homeTask: '');
-    _lessonsRepository.setApiLesson(newLessonData);
+    _lessonsRepository.setApiLesson(newLesson);
     emit(JournalScreenLoading());
     var lessonsData = await _lessonsRepository.getLessonsList();
     if(lessonsData.isSuccess()) {
@@ -92,7 +93,7 @@ class JournalScreenBloc extends Bloc<JournalScreenEvent, JournalScreenState> {
 
   void _editLessonContents(
       EditLessonContents event, Emitter<JournalScreenState> emit) async {
-    final updatedLessonData = LessonData(
+    final updatedLessonData = Lesson(
         id: event.editLesson.id,
         dateTime: event.editLesson.dateTime,
         contents: event.newLessonContents,
@@ -112,13 +113,13 @@ class JournalScreenBloc extends Bloc<JournalScreenEvent, JournalScreenState> {
 
   void _editLessonHomeTask(
       EditLessonHomeTask event, Emitter<JournalScreenState> emit) async {
-    final updatedLessonData = LessonData(
+    final updatedLesson = Lesson(
       id: event.editLesson.id,
       dateTime: event.editLesson.dateTime,
       contents: event.editLesson.contents,
       homeTask: event.newHomeTask,
     );
-    _lessonsRepository.updateApiLesson(updatedLessonData);
+    _lessonsRepository.updateApiLesson(updatedLesson);
     emit(JournalScreenLoading());
     var lessonsData = await _lessonsRepository.getLessonsList();
     if(lessonsData.isSuccess()) {
@@ -132,13 +133,13 @@ class JournalScreenBloc extends Bloc<JournalScreenEvent, JournalScreenState> {
 
   void _editLessonDate(
       EditLessonDate event, Emitter<JournalScreenState> emit) async {
-    final updatedLessonData = LessonData(
+    final updatedLesson = Lesson(
       id: event.editLesson.id,
       dateTime: event.newDate,
       contents: event.editLesson.contents,
       homeTask: event.editLesson.homeTask,
     );
-    _lessonsRepository.updateApiLesson(updatedLessonData);
+    _lessonsRepository.updateApiLesson(updatedLesson);
     emit(JournalScreenLoading());
     var lessonsData = await _lessonsRepository.getLessonsList();
     if(lessonsData.isSuccess()) {

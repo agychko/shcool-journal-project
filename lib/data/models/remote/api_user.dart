@@ -3,9 +3,10 @@ class ApiUser {
   String? firstName;
   String? lastName;
   String? email;
+  String? password;
 
   ApiUser({
-    required this.id, required this.firstName, required this.lastName, required this.email,
+    required this.id, required this.firstName, required this.lastName, required this.email, required this.password
 });
 
   ApiUser.fromJson(Map<String, dynamic> json) {
@@ -13,6 +14,7 @@ class ApiUser {
     firstName = json['firstName'];
     lastName = json['lastName'];
     email = json['email'];
+    // password = json['password'];
   }
 
   Map<String, dynamic> toJson() {
@@ -20,6 +22,7 @@ class ApiUser {
       'firstName': firstName,
       'lastName': lastName,
       'email': email,
+      // 'password': password,
     };
   }
 }

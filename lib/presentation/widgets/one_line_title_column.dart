@@ -53,10 +53,6 @@ class _OneLineTitleColumnState extends State<OneLineTitleColumn> {
                 textAlign: TextAlign.center,
                 overflow: TextOverflow.ellipsis,
                 maxLines: 2)),
-        // const SizedBox(
-        //   width: 1,
-        //   child: VerticalDivider(color: Colors.grey, thickness: 1),
-        // )
       ]))
     ];
   }
@@ -70,10 +66,6 @@ class _OneLineTitleColumnState extends State<OneLineTitleColumn> {
                     width: width,
                     child: Text(rowsData[index].textElement,
                         textAlign: TextAlign.center, maxLines: 4)),
-                //
-                //   width: 1,
-                //   child: VerticalDivider(color: Colors.grey, thickness: 1),
-                // )
               ]), onTap: () {
             widget.onTap(rowsData[index].objectId);
           })

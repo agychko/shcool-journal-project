@@ -4,6 +4,7 @@ Future<T?> showTextDialog<T>(BuildContext context, {
   required String title,
   required String value,
   required String? Function(String? value)? validator,
+  required TextInputType? keyboardType,
 }) =>
     showDialog<T>(
       context: context,
@@ -12,6 +13,7 @@ Future<T?> showTextDialog<T>(BuildContext context, {
             title: title,
             value: value,
             validator: validator,
+            keyboardType: keyboardType,
           ),
     );
 
@@ -19,6 +21,7 @@ class TextDialogWidget extends StatefulWidget {
   final String title;
   final String value;
   final String? Function(String? value)? validator;
+  final TextInputType? keyboardType;
 
 
   const TextDialogWidget({
@@ -26,6 +29,7 @@ class TextDialogWidget extends StatefulWidget {
     required this.title,
     required this.value,
     this.validator,
+    this.keyboardType,
   }) : super(key: key);
 
   @override
@@ -52,7 +56,7 @@ class TextDialogWidgetState extends State<TextDialogWidget> {
           child: TextFormField(
             validator: widget.validator,
             controller: controller,
-            keyboardType: TextInputType.number,
+            keyboardType: widget.keyboardType,
             decoration: const InputDecoration(
               border: OutlineInputBorder(),
             ),

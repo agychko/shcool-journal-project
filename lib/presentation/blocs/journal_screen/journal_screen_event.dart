@@ -17,14 +17,14 @@ class AddPoint extends JournalScreenEvent {
 }
 
 class EditLessonContents extends JournalScreenEvent {
-  final LessonData editLesson;
+  final Lesson editLesson;
   final String newLessonContents;
 
   EditLessonContents(this.editLesson, this.newLessonContents);
 }
 
 class EditLessonHomeTask extends JournalScreenEvent {
-  final LessonData editLesson;
+  final Lesson editLesson;
   final String newHomeTask;
 
   EditLessonHomeTask(this.editLesson, this.newHomeTask);
@@ -32,7 +32,7 @@ class EditLessonHomeTask extends JournalScreenEvent {
 
 
 class EditLessonDate extends JournalScreenEvent {
-  final LessonData editLesson;
+  final Lesson editLesson;
   final DateTime newDate;
 
   EditLessonDate(this.editLesson, this.newDate);

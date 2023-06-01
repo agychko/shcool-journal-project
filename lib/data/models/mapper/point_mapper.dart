@@ -1,6 +1,6 @@
-import 'package:journal/data/remote/model/api_point.dart';
+import 'package:journal/data/models/remote/api_point.dart';
 
-import '../../domain/entities/point.dart';
+import '../../../domain/entities/point.dart';
 
 class PointMapper {
   static Point fromApi(ApiPoint apiPoint) {

@@ -14,8 +14,8 @@ class JournalScreenError extends JournalScreenState {
 }
 
 class JournalScreenSuccess extends JournalScreenState {
-  final List<User> usersData;
-  final List<LessonData> lessonData;
+  final List<Student> usersData;
+  final List<Lesson> lessonData;
   final List<Point> pointsData;
 
   JournalScreenSuccess(this.usersData, this.lessonData, this.pointsData);

@@ -1,8 +1,8 @@
-import 'package:journal/data/remote/source/point_api_source.dart';
+import 'package:journal/data/sources/remote/point_api_source.dart';
 
 import '../../domain/entities/point.dart';
 import '../../domain/repositories/points_repository.dart';
-import '../response/data_response.dart';
+import '../models/response/data_response.dart';
 
 class PointsRepositoryImpl extends PointsRepository {
   final PointApiSource _pointApiSource;

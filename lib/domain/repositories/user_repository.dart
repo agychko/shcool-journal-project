@@ -1,8 +1,10 @@
 
-import 'package:journal/data/response/data_response.dart';
-import 'package:journal/domain/entities/user.dart';
+import 'package:journal/data/models/response/data_response.dart';
+import 'package:journal/domain/entities/student.dart';
 
 
 abstract class UserRepository {
-  Future <DataResponse<List<User>>> getUsersList ();
+
+  Future <DataResponse<List<Student>>> getUsersList ();
+
 }

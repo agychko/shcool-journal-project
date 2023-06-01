@@ -4,16 +4,17 @@ import 'package:journal/presentation/widgets/one_line_title_column.dart';
 import 'package:journal/presentation/widgets/text_dialog_widget.dart';
 import 'package:journal/utils/identifier.dart';
 
-import '../blocs/journal_screen/journal_screen_bloc.dart';
+import '../../blocs/journal_screen/journal_screen_bloc.dart';
 
-class LessonListScreen extends StatefulWidget {
-  const LessonListScreen({Key? key}) : super(key: key);
+class LessonsListScreen extends StatefulWidget {
+  final String title;
+  const LessonsListScreen({Key? key, required this.title}) : super(key: key);
 
   @override
-  State<LessonListScreen> createState() => _LessonListScreenState();
+  State<LessonsListScreen> createState() => _LessonsListScreenState();
 }
 
-class _LessonListScreenState extends State<LessonListScreen> {
+class _LessonsListScreenState extends State<LessonsListScreen> {
   ScrollController lessonController = ScrollController();
 
   Future editLessonDate(String id) async {
@@ -45,6 +46,7 @@ class _LessonListScreenState extends State<LessonListScreen> {
       context,
       title: 'Edit Lesson Theme',
       value: editLesson.contents,
+      keyboardType: TextInputType.text,
       validator: (String? value) {
         if (value == null || value.isEmpty) {
           return 'Please enter some text';
@@ -70,6 +72,7 @@ class _LessonListScreenState extends State<LessonListScreen> {
       context,
       title: 'Edit Lesson Home Task',
       value: editLesson.homeTask,
+      keyboardType: TextInputType.text,
       validator: (String? value) {
         if (value == null || value.isEmpty) {
           return 'Please enter some text';
@@ -111,7 +114,7 @@ class _LessonListScreenState extends State<LessonListScreen> {
           });
           return Scaffold(
             appBar: AppBar(
-              title: const Text('Lesson List'),
+              title: Text(widget.title),
             ),
             body: SafeArea(
               child: Stack(

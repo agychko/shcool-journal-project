@@ -1,20 +1,24 @@
 import 'dart:convert';
 
-import 'package:journal/data/mapper/lesson_mapper.dart';
-import 'package:journal/data/remote/model/api_lesson.dart';
-import 'package:journal/domain/entities/lesson_data.dart';
+import 'package:journal/data/models/mapper/lesson_mapper.dart';
+import 'package:journal/data/models/remote/api_lesson.dart';
+import 'package:journal/domain/entities/lesson.dart';
 import 'package:http/http.dart' as http;
-import 'package:journal/utils/server.dart';
-import '../../response/data_response.dart';
+import 'package:journal/utils/constants.dart';
+import '../../models/response/data_response.dart';
+import '../local/preferences_source.dart';
 
-const String server = appServer;
+String server = Constants.appServer;
 
 class LessonApiSource {
-  Future<DataResponse<List<LessonData>>> getLessonsList() async {
+  final PreferencesSource preferencesSource = PreferencesSource();
+  Future<DataResponse<List<Lesson>>> getLessonsList() async {
     try {
       var url = Uri.parse('$server/v1/lessons');
+      String? accessToken = await preferencesSource.getAccessToken();
       var response = await http.get(url, headers: <String, String>{
-        'Content-Type': 'application/json; charset=UTF-8'
+        'Content-Type': 'application/json; charset=UTF-8',
+        'Authorization': 'Bearer $accessToken',
       });
       var jsonResponse = jsonDecode(response.body);
       var apiLessonsList = ApiLessonsList.fromJson(jsonResponse);
@@ -30,26 +34,30 @@ class LessonApiSource {
     }
   }
 
-  void setApiLesson(LessonData lessonData) async {
-    ApiLesson apiLesson = LessonMapper.toApi(lessonData);
+  void setApiLesson(Lesson lesson) async {
+    ApiLesson apiLesson = LessonMapper.toApi(lesson);
     var url = Uri.parse('$server/v1/lessons/create');
+    String? accessToken = await preferencesSource.getAccessToken();
     await http.post(
         url,
       body: jsonEncode(apiLesson.toCreateJson()),
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
+        'Authorization': 'Bearer $accessToken',
       },
     );
   }
 
-  void updateApiLesson(LessonData lessonData) async {
-    ApiLesson apiLesson = LessonMapper.toApi(lessonData);
+  void updateApiLesson(Lesson lesson) async {
+    ApiLesson apiLesson = LessonMapper.toApi(lesson);
     var url = Uri.parse('$server/v1/lessons/update');
+    String? accessToken = await preferencesSource.getAccessToken();
     await http.post(
       url,
       body: jsonEncode(apiLesson.toUpdateJson()),
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
+        'Authorization': 'Bearer $accessToken',
       },
     );
   }

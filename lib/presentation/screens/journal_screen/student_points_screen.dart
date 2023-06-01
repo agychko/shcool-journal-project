@@ -6,21 +6,20 @@ import 'package:journal/presentation/widgets/two_line_title_column.dart';
 import 'package:journal/utils/identifier.dart';
 
 import 'package:linked_scroll_controller/linked_scroll_controller.dart';
-import '../../domain/entities/point.dart';
-import '../../domain/entities/user.dart';
-import '../widgets/text_dialog_widget.dart';
+import '../../../domain/entities/point.dart';
+import '../../../domain/entities/student.dart';
+import '../../widgets/text_dialog_widget.dart';
 
-class JournalScreen extends StatefulWidget {
-  const JournalScreen({super.key, required this.title});
+class StudentPointsScreen extends StatefulWidget {
+  const StudentPointsScreen({super.key, required this.title});
 
   final String title;
 
   @override
-  State<JournalScreen> createState() => _JournalScreenState();
+  State<StudentPointsScreen> createState() => _StudentPointsScreenState();
 }
 
-class _JournalScreenState extends State<JournalScreen> {
-
+class _StudentPointsScreenState extends State<StudentPointsScreen> {
   LinkedScrollControllerGroup controllerGroup = LinkedScrollControllerGroup();
   ScrollController headerScrollController = ScrollController();
   ScrollController dataScrollController = ScrollController();
@@ -30,15 +29,16 @@ class _JournalScreenState extends State<JournalScreen> {
         .read<JournalScreenBloc>()
         .points
         .firstWhere((element) => element.id == id);
-    User editUser = context
+    Student editStudent = context
         .read<JournalScreenBloc>()
         .users
         .firstWhere((element) => element.id == editPoint.userId);
     if (editPoint.value == '') {
       final pointValue = await showTextDialog(
         context,
-        title: '${editUser.firstName} ${editUser.lastName} Point',
+        title: '${editStudent.firstName} ${editStudent.lastName} Point',
         value: editPoint.value,
+        keyboardType: TextInputType.number,
         validator: (value) {
           if (value != '1' &&
               value != '2' &&
@@ -86,9 +86,7 @@ class _JournalScreenState extends State<JournalScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Row(
-          children: [
-            Text(widget.title),
-          ],
+          children: [Text(widget.title), const CircularProgressIndicator()],
         ),
       ),
       body: BlocBuilder<JournalScreenBloc, JournalScreenState>(
@@ -154,20 +152,21 @@ class _JournalScreenState extends State<JournalScreen> {
                                               .padLeft(2, '0'),
                                           rowsData: List.generate(
                                               state.usersData.length, (index) {
-                                            User user = state.usersData[index];
+                                            Student student =
+                                                state.usersData[index];
                                             Point point = state.pointsData
                                                 .firstWhere(
                                                     (element) =>
                                                         element.lessonId ==
                                                             lesson.id &&
                                                         element.userId ==
-                                                            user.id,
+                                                            student.id,
                                                     orElse: () {
                                               Point localPoint = Point(
-                                                  id: '${lesson.id}${user.id}',
+                                                  id: '${lesson.id}${student.id}',
                                                   value: '',
                                                   lessonId: lesson.id,
-                                                  userId: user.id);
+                                                  userId: student.id);
                                               state.pointsData.add(localPoint);
                                               return localPoint;
                                             });

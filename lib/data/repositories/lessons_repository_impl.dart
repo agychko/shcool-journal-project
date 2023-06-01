@@ -1,6 +1,6 @@
-import 'package:journal/data/remote/source/lesson_api_source.dart';
-import 'package:journal/data/response/data_response.dart';
-import 'package:journal/domain/entities/lesson_data.dart';
+import 'package:journal/data/sources/remote/lesson_api_source.dart';
+import 'package:journal/data/models/response/data_response.dart';
+import 'package:journal/domain/entities/lesson.dart';
 import 'package:journal/domain/repositories/lessons_repository.dart';
 
 class LessonsRepositoryImpl extends LessonsRepository {
@@ -9,7 +9,7 @@ class LessonsRepositoryImpl extends LessonsRepository {
   LessonsRepositoryImpl(this._lessonApiSource);
 
   @override
-  Future<DataResponse<List<LessonData>>> getLessonsList() async {
+  Future<DataResponse<List<Lesson>>> getLessonsList() async {
     var lessonResponse = await _lessonApiSource.getLessonsList();
     if (lessonResponse.isSuccess()) {
       var lessonsList = lessonResponse.asSuccess().data;
@@ -20,13 +20,13 @@ class LessonsRepositoryImpl extends LessonsRepository {
   }
 
   @override
-  void setApiLesson(LessonData lessonData) async {
-    _lessonApiSource.setApiLesson(lessonData);
+  void setApiLesson(Lesson lesson) async {
+    _lessonApiSource.setApiLesson(lesson);
   }
 
   @override
-  void updateApiLesson(LessonData lessonData) async {
-    _lessonApiSource.updateApiLesson(lessonData);
+  void updateApiLesson(Lesson lesson) async {
+    _lessonApiSource.updateApiLesson(lesson);
   }
 
 }

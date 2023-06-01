@@ -1,23 +1,23 @@
-class LessonData {
+class Lesson {
   final String id;
   final DateTime dateTime;
   final String contents;
   final String homeTask;
 
-  LessonData({
+  Lesson({
     required this.id,
     required this.dateTime,
     required this.contents,
     required this.homeTask,
   });
 
-  LessonData copy({
+  Lesson copy({
     String? id,
     DateTime? dateTime,
     String? contents,
     String? homeTask,
   }) =>
-      LessonData(
+      Lesson(
           id: id ?? this.id,
           dateTime: dateTime ?? this.dateTime,
           contents: contents ?? this.contents,

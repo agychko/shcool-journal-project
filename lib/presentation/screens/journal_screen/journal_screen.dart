@@ -1,20 +1,20 @@
 import 'package:flutter/material.dart';
 
-import 'journal_screen.dart';
-import 'lesson_list_screen.dart';
+import 'student_points_screen.dart';
+import 'lessons_list_screen.dart';
 
-class HomeScreen extends StatefulWidget {
-  const HomeScreen({Key? key}) : super(key: key);
+class JournalScreen extends StatefulWidget {
+  const JournalScreen({Key? key}) : super(key: key);
 
   @override
-  State<HomeScreen> createState() => _HomeScreenState();
+  State<JournalScreen> createState() => _JournalScreenState();
 }
 
-class _HomeScreenState extends State<HomeScreen> {
+class _JournalScreenState extends State<JournalScreen> {
   int _selectedIndex = 0;
   static const List<Widget> _widgetOptions = <Widget>[
-    JournalScreen(title: 'Students List'),
-    LessonListScreen(),
+    StudentPointsScreen(title: 'Student Points'),
+    LessonsListScreen(title: 'Lessons List'),
   ];
 
   void _onItemTapped(int index) {

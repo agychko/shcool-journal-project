@@ -1,7 +1,10 @@
 
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:journal/presentation/screens/signup_screen.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:journal/presentation/screens/auth_screens/login_screen.dart';
+
+import 'presentation/blocs/auth_screen/auth_screen_bloc.dart';
 
 void main() {
   runApp(const MyApp());
@@ -20,7 +23,11 @@ class MyApp extends StatelessWidget {
         primarySwatch: Colors.indigo,
       ),
       home:
-      const SignupScreen(),
+      BlocProvider(
+          create: (context) => AuthScreenBloc(),
+          child: const LoginScreen()),
+
+      // const LoginScreen(),
       // BlocProvider(
       //   create: (context) => JournalScreenBloc(),
       //     child: const JournalScreen(title: 'Flutter Demo Home Page')
