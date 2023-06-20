@@ -22,14 +22,14 @@ class _LoginScreenState extends State<LoginScreen> {
     context
         .read<AuthScreenBloc>()
         .add(Login(emailController.text, passwordController.text));
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => BlocProvider(
-            create: (context) => JournalScreenBloc(),
-            child: const JournalScreen()),
-      ),
-    );
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => BlocProvider(
+              create: (context) => JournalScreenBloc(),
+              child: const JournalScreen()),
+        ),
+      );
   }
 
   @override
@@ -99,4 +99,5 @@ class _LoginScreenState extends State<LoginScreen> {
       },
     );
   }
+
 }

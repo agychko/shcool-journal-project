@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:journal/data/models/remote/api_user.dart';
 
@@ -18,20 +19,25 @@ class UserApiSource {
         'Content-Type': 'application/json; charset=UTF-8',
         'Authorization': 'Bearer $accessToken',
       });
-      var jsonResponse = jsonDecode(response.body);
-      var apiUsersList = ApiUsersList.fromJson(jsonResponse);
-      return Future.delayed(
-        const Duration(milliseconds: 200),
-        () => DataResponse.success(
-          List.generate(
-              apiUsersList.apiUsers.length,
-              (index) => Student(
-                    id: apiUsersList.apiUsers[index].id!,
-                    firstName: apiUsersList.apiUsers[index].firstName!,
-                    lastName: apiUsersList.apiUsers[index].lastName!,
-                  )),
-        ),
-      );
+      if (response.statusCode == 200) {
+        var jsonResponse = jsonDecode(response.body);
+        var apiUsersList = ApiUsersList.fromJson(jsonResponse['data']);
+        return Future.delayed(
+          const Duration(milliseconds: 200),
+          () => DataResponse.success(
+            List.generate(
+                apiUsersList.apiUsers.length,
+                (index) => Student(
+                      id: apiUsersList.apiUsers[index].id!,
+                      firstName: apiUsersList.apiUsers[index].firstName!,
+                      lastName: apiUsersList.apiUsers[index].lastName!,
+                    )),
+          ),
+        );
+      } else {
+        final message = jsonDecode(response.body)['message'];
+        throw HttpException(message);
+      }
     } catch (error) {
       return DataResponse.error(error.toString());
     }

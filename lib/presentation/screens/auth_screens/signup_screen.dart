@@ -98,7 +98,7 @@ class _SignupScreenState extends State<SignupScreen> {
                     validator: (email) {
                       if (email == null ||
                           email.isEmpty ||
-                          !RegExp(r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+")
+                          !RegExp(r"^[a-zA-Z0-9.a-zA-Z0-9!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+")
                               .hasMatch(email)) {
                         return 'Please enter a valid email';
                       }

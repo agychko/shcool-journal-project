@@ -1,3 +1,5 @@
+import 'package:journal/data/models/response/data_response.dart';
+import 'package:journal/data/models/response/auth_response.dart';
 import 'package:journal/domain/repositories/auth_repository.dart';
 
 import '../sources/local/preferences_source.dart';
@@ -10,10 +12,15 @@ class AuthRepositoryImpl extends AuthRepository {
   AuthRepositoryImpl(this._authSource, this._preferenceSource);
 
   @override
-  Future login(String email, String password) async {
-    var tokenResponse = await _authSource.login(email: email, password: password);
-    await _preferenceSource.setAccessToken(tokenResponse['access_token']);
-    await _preferenceSource.setRefreshToken(tokenResponse['refresh_token']);
+  Future <DataResponse<AuthResponse>> login(String email, String password) async {
+    var loginResponse = await _authSource.login(email, password);
+    if (loginResponse.isSuccess()) {
+      var data = loginResponse.asSuccess().data;
+      await _preferenceSource.setAccessToken(data.accessToken!);
+      await _preferenceSource.setRefreshToken(data.refreshToken!);
+      return DataResponse.success(data);
+    }
+    return DataResponse.error(loginResponse.asError().errorMessage);
   }
 
 }
