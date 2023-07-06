@@ -1,17 +1,19 @@
-import 'package:journal/data/sources/remote/point_api_source.dart';
-
-import '../../domain/entities/point.dart';
-import '../../domain/repositories/points_repository.dart';
-import '../models/response/data_response.dart';
+import 'package:journal/data/models/response/data_response.dart';
+import 'package:journal/data/sources/local/preferences_source.dart';
+import 'package:journal/data/sources/remote/points_source.dart';
+import 'package:journal/domain/entities/point.dart';
+import 'package:journal/domain/repositories/points_repository.dart';
 
 class PointsRepositoryImpl extends PointsRepository {
-  final PointApiSource _pointApiSource;
+  final PointsSource _pointsSource;
+  final PreferencesSource _preferencesSource;
 
-  PointsRepositoryImpl(this._pointApiSource);
+  PointsRepositoryImpl(this._pointsSource, this._preferencesSource);
 
   @override
   Future<DataResponse<List<Point>>> getPointsList() async {
-    var pointResponse = await _pointApiSource.getPointsList();
+    String accessToken = await _preferencesSource.getAccessToken() ?? '';
+    var pointResponse = await _pointsSource.getPointsList(accessToken);
     if (pointResponse.isSuccess()) {
       var pointsList = pointResponse.asSuccess().data;
       return DataResponse.success(pointsList);
@@ -21,8 +23,8 @@ class PointsRepositoryImpl extends PointsRepository {
   }
 
   @override
-  void setApiPoint(Point point) async {
-    _pointApiSource.setApiPoint(point);
+  void setPoint(Point point) async {
+    String accessToken = await _preferencesSource.getAccessToken() ?? '';
+    _pointsSource.setApiPoint(accessToken, point);
   }
-
 }

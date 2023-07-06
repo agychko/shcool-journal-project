@@ -2,8 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:journal/presentation/screens/auth_screens/login_screen.dart';
 import 'package:journal/presentation/widgets/custom_text_field_widget.dart';
 
-import '../../../data/sources/remote/user_api_source.dart';
-
 class SignupScreen extends StatefulWidget {
   const SignupScreen({Key? key}) : super(key: key);
 
@@ -17,7 +15,6 @@ class _SignupScreenState extends State<SignupScreen> {
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
-  final UserApiSource authService = UserApiSource();
 
   void signupUser() {
     if (_formKey.currentState!.validate()) {

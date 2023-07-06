@@ -1,31 +1,31 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:journal/data/sources/local/preferences_source.dart';
-import 'package:journal/data/sources/remote/lesson_api_source.dart';
-import 'package:journal/data/sources/remote/point_api_source.dart';
-import 'package:journal/data/sources/remote/user_api_source.dart';
-import 'package:journal/data/repositories/lessons_repository_impl.dart';
-import 'package:journal/data/repositories/points_repository_impl.dart';
-import 'package:journal/data/repositories/user_repository_impl.dart';
+import 'package:get_it/get_it.dart';
+import 'package:journal/domain/entities/lesson.dart';
 import 'package:journal/domain/entities/point.dart';
+import 'package:journal/domain/entities/user.dart';
+import 'package:journal/domain/use_cases/get_lessons_list_use_case.dart';
+import 'package:journal/domain/use_cases/get_points_list_use_case.dart';
+import 'package:journal/domain/use_cases/get_users_list_use_case.dart';
+import 'package:journal/domain/use_cases/set_lesson_use_case.dart';
+import 'package:journal/domain/use_cases/set_point_use_case.dart';
+import 'package:journal/domain/use_cases/update_lesson_use_case.dart';
 import 'package:meta/meta.dart';
 
-import '../../../domain/entities/lesson.dart';
-import '../../../domain/entities/student.dart';
-import '../../../domain/repositories/lessons_repository.dart';
-import '../../../domain/repositories/points_repository.dart';
-import '../../../domain/repositories/user_repository.dart';
 
 part 'journal_screen_event.dart';
 
 part 'journal_screen_state.dart';
 
 class JournalScreenBloc extends Bloc<JournalScreenEvent, JournalScreenState> {
-  final UserRepository _userRepository = UserRepositoryImpl(UserApiSource(), PreferencesSource());
-  final LessonsRepository _lessonsRepository =
-      LessonsRepositoryImpl(LessonApiSource());
-  final PointsRepository _pointsRepository = PointsRepositoryImpl(PointApiSource());
+  final GetUsersListUseCase _getUsersListUseCase = GetIt.instance<GetUsersListUseCase>();
+  final GetLessonsListUseCase _getLessonsListUseCase = GetIt.instance<GetLessonsListUseCase>();
+  final GetPointsListUseCase _getPointsListUseCase = GetIt.instance<GetPointsListUseCase>();
+  final SetPointUseCase _setPointUseCase = GetIt.instance<SetPointUseCase>();
+  final SetLessonUseCase _setLessonUseCase = GetIt.instance<SetLessonUseCase>();
+  final UpdateLessonUseCase _updateLessonUseCase = GetIt.instance<UpdateLessonUseCase>();
+
   List<Lesson> lessons = [];
-  List<Student> users = [];
+  List<User> users = [];
   List<Point> points = [];
 
   JournalScreenBloc() : super(JournalScreenInitial()) {
@@ -41,9 +41,9 @@ class JournalScreenBloc extends Bloc<JournalScreenEvent, JournalScreenState> {
 
   void _getStudentsList(Emitter<JournalScreenState> emit) async {
     emit(JournalScreenLoading());
-    var usersData = await _userRepository.getUsersList();
-    var lessonsData = await _lessonsRepository.getLessonsList();
-    var pointsData = await _pointsRepository.getPointsList();
+    var usersData = await _getUsersListUseCase();
+    var lessonsData = await _getLessonsListUseCase();
+    var pointsData = await _getPointsListUseCase();
     if (usersData.isSuccess() && lessonsData.isSuccess() && pointsData.isSuccess()){
       var usersList = usersData.asSuccess().data;
       var lessonsList = lessonsData.asSuccess().data;
@@ -64,9 +64,9 @@ class JournalScreenBloc extends Bloc<JournalScreenEvent, JournalScreenState> {
         lessonId: event.editPoint.lessonId,
         value: event.newPointValue,
     );
-    _pointsRepository.setApiPoint(newPoint);
+    _setPointUseCase(newPoint);
     emit(JournalScreenLoading());
-    var pointsData = await _pointsRepository.getPointsList();
+    var pointsData = await _getPointsListUseCase();
     if(pointsData.isSuccess()) {
       var pointsList = pointsData.asSuccess().data;
       points = List.of(pointsList);
@@ -79,9 +79,9 @@ class JournalScreenBloc extends Bloc<JournalScreenEvent, JournalScreenState> {
   void _addLesson(Emitter<JournalScreenState> emit) async {
     final newLesson = Lesson(
         id: '', dateTime: DateTime.now(), contents: '', homeTask: '');
-    _lessonsRepository.setApiLesson(newLesson);
+    _setLessonUseCase(newLesson);
     emit(JournalScreenLoading());
-    var lessonsData = await _lessonsRepository.getLessonsList();
+    var lessonsData = await _getLessonsListUseCase();
     if(lessonsData.isSuccess()) {
       var lessonsList = lessonsData.asSuccess().data;
       lessons = List.of(lessonsList);
@@ -99,9 +99,9 @@ class JournalScreenBloc extends Bloc<JournalScreenEvent, JournalScreenState> {
         contents: event.newLessonContents,
         homeTask: event.editLesson.homeTask,
     );
-    _lessonsRepository.updateApiLesson(updatedLessonData);
+    _updateLessonUseCase(updatedLessonData);
     emit(JournalScreenLoading());
-    var lessonsData = await _lessonsRepository.getLessonsList();
+    var lessonsData = await _getLessonsListUseCase();
     if(lessonsData.isSuccess()) {
       var lessonsList = lessonsData.asSuccess().data;
       lessons = List.of(lessonsList);
@@ -119,9 +119,9 @@ class JournalScreenBloc extends Bloc<JournalScreenEvent, JournalScreenState> {
       contents: event.editLesson.contents,
       homeTask: event.newHomeTask,
     );
-    _lessonsRepository.updateApiLesson(updatedLesson);
+    _updateLessonUseCase(updatedLesson);
     emit(JournalScreenLoading());
-    var lessonsData = await _lessonsRepository.getLessonsList();
+    var lessonsData = await _getLessonsListUseCase();
     if(lessonsData.isSuccess()) {
       var lessonsList = lessonsData.asSuccess().data;
       lessons = List.of(lessonsList);
@@ -139,9 +139,9 @@ class JournalScreenBloc extends Bloc<JournalScreenEvent, JournalScreenState> {
       contents: event.editLesson.contents,
       homeTask: event.editLesson.homeTask,
     );
-    _lessonsRepository.updateApiLesson(updatedLesson);
+    _updateLessonUseCase(updatedLesson);
     emit(JournalScreenLoading());
-    var lessonsData = await _lessonsRepository.getLessonsList();
+    var lessonsData = await _getLessonsListUseCase();
     if(lessonsData.isSuccess()) {
       var lessonsList = lessonsData.asSuccess().data;
       lessons = List.of(lessonsList);

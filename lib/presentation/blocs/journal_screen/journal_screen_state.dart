@@ -14,7 +14,7 @@ class JournalScreenError extends JournalScreenState {
 }
 
 class JournalScreenSuccess extends JournalScreenState {
-  final List<Student> usersData;
+  final List<User> usersData;
   final List<Lesson> lessonData;
   final List<Point> pointsData;
 

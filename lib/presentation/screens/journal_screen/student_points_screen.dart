@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:journal/domain/entities/user.dart';
 import 'package:journal/presentation/blocs/journal_screen/journal_screen_bloc.dart';
 import 'package:journal/presentation/widgets/one_line_title_column.dart';
 import 'package:journal/presentation/widgets/two_line_title_column.dart';
@@ -7,7 +8,6 @@ import 'package:journal/utils/identifier.dart';
 
 import 'package:linked_scroll_controller/linked_scroll_controller.dart';
 import '../../../domain/entities/point.dart';
-import '../../../domain/entities/student.dart';
 import '../../widgets/text_dialog_widget.dart';
 
 class StudentPointsScreen extends StatefulWidget {
@@ -29,7 +29,7 @@ class _StudentPointsScreenState extends State<StudentPointsScreen> {
         .read<JournalScreenBloc>()
         .points
         .firstWhere((element) => element.id == id);
-    Student editStudent = context
+    User editStudent = context
         .read<JournalScreenBloc>()
         .users
         .firstWhere((element) => element.id == editPoint.userId);
@@ -152,7 +152,7 @@ class _StudentPointsScreenState extends State<StudentPointsScreen> {
                                               .padLeft(2, '0'),
                                           rowsData: List.generate(
                                               state.usersData.length, (index) {
-                                            Student student =
+                                            User student =
                                                 state.usersData[index];
                                             Point point = state.pointsData
                                                 .firstWhere(

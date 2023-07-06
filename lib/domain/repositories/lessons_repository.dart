@@ -3,6 +3,8 @@ import 'package:journal/domain/entities/lesson.dart';
 
 abstract class LessonsRepository {
   Future<DataResponse<List<Lesson>>> getLessonsList();
-  void setApiLesson(Lesson lesson);
-  void updateApiLesson(Lesson lesson);
+
+  void setLesson(Lesson lesson);
+
+  void updateLesson(Lesson lesson);
 }

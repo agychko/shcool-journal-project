@@ -1,21 +1,21 @@
 
 import 'dart:convert';
 
+import 'package:journal/data/models/mapper/point_mapper.dart';
+import 'package:journal/data/models/remote/api_point.dart';
+import 'package:journal/data/models/response/data_response.dart';
+import 'package:journal/data/sources/remote/points_source.dart';
 import 'package:journal/domain/entities/point.dart';
 import 'package:http/http.dart' as http;
 import 'package:journal/utils/constants.dart';
-import '../../models/mapper/point_mapper.dart';
-import '../../models/response/data_response.dart';
-import '../../models/remote/api_point.dart';
-import '../local/preferences_source.dart';
 
 String server = Constants.appServer;
-class PointApiSource {
-  final PreferencesSource preferencesSource = PreferencesSource();
-  Future<DataResponse<List<Point>>> getPointsList() async {
+class PointsSourceImpl extends PointsSource{
+
+  @override
+  Future<DataResponse<List<Point>>> getPointsList(String? accessToken) async {
     try {
       var url = Uri.parse('$server/v1/points');
-      String? accessToken = await preferencesSource.getAccessToken();
       var response = await http.get(url, headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
         'Authorization': 'Bearer $accessToken',
@@ -34,10 +34,11 @@ class PointApiSource {
     }
   }
 
-  void setApiPoint(Point point) async {
+  @override
+  void setApiPoint(String? accessToken, Point point) async {
+    print('points: $accessToken');
     ApiPoint apiPoint = PointMapper.toApi(point);
     var url = Uri.parse('$server/v1/points/create');
-    String? accessToken = await preferencesSource.getAccessToken();
     await http.post(
       url,
       body: jsonEncode(apiPoint.toJson()),
